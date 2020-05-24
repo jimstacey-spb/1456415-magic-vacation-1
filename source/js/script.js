@@ -21,3 +21,11 @@ social();
 
 const fullPageScroll = new FullPageScroll();
 fullPageScroll.init();
+
+// Убираем возможность фокуса на элементах SVG и path, потому что он там не нужен.
+// По уму это должно быть прописано в HTML или при импорте SVG с помощью вебпака, но мне лень. Поэтому пока так.
+document.querySelectorAll('svg, path').forEach((el) => {
+  el.setAttribute('focusable', 'false');
+  el.setAttribute('tabindex', "-1");
+})
+document.documentElement.blur();

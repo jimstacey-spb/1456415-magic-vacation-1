@@ -1,100 +1,49 @@
 .social-block {
   position: relative;
 
-  &:hover {
+  &--active {
     .social-block__list {
       opacity: 1;
       pointer-events: auto;
     }
-  }
-}
 
-.social-block__toggler {
-  @include btn-reset;
-  position: relative;
-  display: block;
-  width: 4rem;
-  height: 4rem;
-  color: $c-dark;
-  border-radius: 50%;
-
-  @media (max-width: $tablet) and (orientation: portrait) {
-    display: none;
-  }
-
-  @media (max-width: $mobile) and (orientation: landscape) {
-    display: none;
-  }
-
-  &::before {
-    @include center;
-    content: "";
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: $c-light;
-    border: 2px solid $c-light;
-    z-index: -1;
-  }
-
-  svg {
-    @include center;
-    display: block;
-    width: 2.3rem;
-    height: 2.2rem;
-  }
-
-  &:hover,
-  .social-block--active & {
-    color: $c-purple;
-
-    &::before {
-      width: 112.5%;
-      height: 112.5%;
-    }
-  }
-
-  &:focus {
-    color: $c-purple;
-    outline: none;
-
-    &::before {
-      border-color: $c-purple;
-    }
-
-    & + .social-block__list {
+    .social-block__link {
       opacity: 1;
-      pointer-events: auto;
+      transform: translateY(0);
     }
-  }
 
-  &:active,
-  &:active:focus {
-    color: $c-light;
+    .social-block__list li {
+      &:nth-child(1) {
+        --element-index: 3;
+      }
 
-    &::before {
-      width: 100%;
-      height: 100%;
-      background-color: $c-purple;
-      border-color: $c-purple;
+      &:nth-child(2) {
+        --element-index: 2;
+      }
+
+      &:nth-child(3) {
+        --element-index: 1;
+      }
     }
   }
 }
+
 
 .social-block__list {
   @include list-reset;
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 1.5rem;
-  opacity: 0;
+  // Мне не понятно, почему был использован вариант связки margin-top + ::before для сохранения области ховера для .social-block
+  // Заменил на padding-top, хотелось бы узнать почему было сделано именно так
+  padding-top: 1.5rem;
   pointer-events: none;
 
   @media (min-width: $stop-scaling) {
-    margin-top: 15px;
+    padding-top: 15px;
   }
 
-  @media (max-width: $tablet) and (orientation: portrait) {
+  @media (max-width: $mobile) and (orientation: landscape), (max-width: $tablet) and (orientation: portrait) {
     position: static;
     display: flex;
     justify-content: center;
@@ -102,49 +51,30 @@
     margin-top: 0;
     opacity: 1;
     pointer-events: auto;
-  }
 
-  @media (max-width: $mobile) and (orientation: landscape) {
-    position: static;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    right: 0;
-    height: 1.5rem;
-
-    @media (min-width: $stop-scaling) {
-      height: 15px;
+    .social-block__link {
+      opacity: 1;
+      transform: none;
     }
-  }
-
-  &:hover {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  &:focus-within {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .social-block--active & {
-    opacity: 1;
-    pointer-events: auto;
   }
 
   li {
     flex: none;
     margin-bottom: 0.5rem;
+
+    // Устанавливаем переменные для того, чтобы повлиять на .social-block__link внутри элемента
+    // Можно было бы циклом, но ради трех правил - избыточное усложнение
+    &:nth-child(1) {
+      --element-index: 1;
+    }
+
+    &:nth-child(2) {
+      --element-index: 2;
+    }
+
+    &:nth-child(3) {
+      --element-index: 3;
+    }
 
     @media (min-width: $stop-scaling) {
       margin-bottom: 5px;
@@ -161,6 +91,8 @@
 }
 
 .social-block__link {
+  --transtion-duration-base: .175s;
+  --fade-in-transition-delay: calc(var(--transtion-duration-base) * (var(--element-index) - 1));
   position: relative;
   display: block;
   width: 4rem;
@@ -168,6 +100,11 @@
   color: $c-light;
   border: 2px solid transparent;
   border-radius: 50%;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: all var(--transtion-duration-base) linear,
+  transform var(--transtion-duration-base) ease-in-out var(--fade-in-transition-delay),
+  opacity var(--transtion-duration-base) ease-in-out var(--fade-in-transition-delay);
 
   @media (min-width: $stop-scaling) {
     width: 40px;
@@ -239,6 +176,76 @@
         width: 10px;
         height: 10px;
       }
+    }
+  }
+}
+
+
+// Перенес в конец файла, т.к. это наименее связанный с остальным кодом элемент
+.social-block__toggler {
+  @include btn-reset;
+  position: relative;
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  color: $c-dark;
+  border-radius: 50%;
+
+  @media (max-width: $tablet) and (orientation: portrait) {
+    display: none;
+  }
+
+  @media (max-width: $mobile) and (orientation: landscape) {
+    display: none;
+  }
+
+  &::before {
+    @include center;
+    content: "";
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: $c-light;
+    border: 2px solid $c-light;
+    z-index: -1;
+    transition: width 0.125s linear, height 0.125s linear;
+  }
+
+  svg {
+    @include center;
+    display: block;
+    width: 2.3rem;
+    height: 2.2rem;
+    transition: color 0.125s linear;
+  }
+
+  .social-block--active & {
+    color: $c-purple;
+
+    &::before {
+      width: 112.5%;
+      height: 112.5%;
+    }
+  }
+
+  &:focus {
+    color: $c-purple;
+    outline: none;
+
+    &::before {
+      border-color: $c-purple;
+    }
+  }
+
+  &:active,
+  &:active:focus {
+    color: $c-light;
+
+    &::before {
+      width: 100%;
+      height: 100%;
+      background-color: $c-purple;
+      border-color: $c-purple;
     }
   }
 }

@@ -35,6 +35,7 @@ export default class FullPageScroll {
   }
 
   changePageDisplay() {
+    this.showScreenFirstTime();
     this.changeVisibilityDisplay();
     this.changeActiveMenuItem();
     this.emitChangeDisplayEvent();
@@ -75,5 +76,16 @@ export default class FullPageScroll {
     } else {
       this.activeScreen = Math.max(0, --this.activeScreen);
     }
+  }
+
+  showScreenFirstTime() {
+    // Без таймаута трансижн почему-то не применяется. Не разбирался почему именно. Был бы благодарен за ответ.
+
+    setTimeout(() => {
+      const currentScreen = this.screenElements[this.activeScreen];
+      if (!currentScreen.classList.contains('screen--shown')) {
+        currentScreen.classList.add('screen--shown');
+      }
+    }, 0)
   }
 }
