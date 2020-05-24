@@ -83,9 +83,9 @@ export default class FullPageScroll {
 
     setTimeout(() => {
       const currentScreen = this.screenElements[this.activeScreen];
-      if (!currentScreen.classList.contains('screen--shown')) {
-        currentScreen.classList.add('screen--shown');
+      if (!currentScreen.classList.contains(`screen--shown`)) {
+        currentScreen.classList.add(`screen--shown`);
       }
-    }, 0)
+    }, 0);
   }
 }
